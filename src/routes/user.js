@@ -1,5 +1,5 @@
 import express from 'express'
-import User from '../models/user'
+import { Address, User } from '../models'
 
 const router = express.Router()
 
@@ -7,6 +7,31 @@ router.get('/getusers', async (req, res) => {
   const users = await User.find().sort('name')
 
   res.status(200).json({ users })
+})
+
+router.post('/createUsers', async (req, res) => {
+  const { name, email, birthDate } = req.body
+
+  const userPayload = {
+    name,
+    email,
+    birthDate
+  }
+
+  try {
+    const user = await User.create(userPayload)
+
+    const addressPayload = {
+      ...req.body.address,
+      user: user._id
+    }
+
+    await Address.create(addressPayload)
+
+    res.status(201).json({ user })
+  } catch {
+    res.status(405).json({ message: 'Invalid input' })
+  }
 })
 
 router.get('/getusersById/:userId', async (req, res) => {

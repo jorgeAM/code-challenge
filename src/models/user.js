@@ -3,9 +3,19 @@ import mongoose from 'mongoose'
 const Schema = mongoose.Schema
 
 const userSchema = new Schema({
-  name: String,
-  email: String,
-  birthDate: Date,
+  name: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    unique: true,
+    required: true
+  },
+  birthDate: {
+    type: Date,
+    required: true
+  },
   address: {
     type: Schema.Types.ObjectId,
     ref: 'Address'
