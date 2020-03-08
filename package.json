@@ -7,12 +7,15 @@
     "node": "12.16.0"
   },
   "scripts": {
+    "build": "babel src --out-dir .dist",
+    "start": "node -r dotenv/config .dist",
     "test": "jest",
-    "dev": "nodemon -r dotenv/config --exec babel-node index.js"
+    "dev": "nodemon -r dotenv/config --exec babel-node src"
   },
   "author": "Jorge L. Alfaro",
   "license": "MIT",
   "devDependencies": {
+    "@babel/cli": "^7.8.4",
     "@babel/core": "^7.8.7",
     "@babel/node": "^7.8.7",
     "@babel/preset-env": "^7.8.7",
