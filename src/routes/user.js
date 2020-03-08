@@ -4,7 +4,9 @@ import { Address, User } from '../models'
 const router = express.Router()
 
 router.get('/getusers', async (req, res) => {
-  const users = await User.find().sort('name')
+  const users = await User.find()
+    .populate('address')
+    .sort('name')
 
   res.status(200).json({ users })
 })
@@ -26,7 +28,9 @@ router.post('/createUsers', async (req, res) => {
       user: user._id
     }
 
-    await Address.create(addressPayload)
+    const address = await Address.create(addressPayload)
+
+    await user.update({ address: address._id })
 
     res.status(201).json({ user })
   } catch {
@@ -38,7 +42,7 @@ router.get('/getusersById/:userId', async (req, res) => {
   const { userId } = req.params
 
   try {
-    const user = await User.findById(userId)
+    const user = await User.findById(userId).populate('address')
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' })
@@ -53,18 +57,20 @@ router.get('/getusersById/:userId', async (req, res) => {
 router.put('/updateUsersById/:userId', async (req, res) => {
   const { userId } = req.params
 
+  const { name, email, birthDate } = req.body
+
   try {
-    const user = await User.findById(userId)
+    const payload = { name, email, birthDate }
+
+    const opt = { new: true }
+
+    const user = await User.findOneAndUpdate({ _id: userId }, payload, opt)
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' })
     }
 
-    const userPayload = { ...req.body }
-
-    await user.update(userPayload, { new: true })
-
-    res.status(201).json({ user })
+    res.status(200).json({ user })
   } catch {
     res.status(405).json({ message: 'Invalid input' })
   }

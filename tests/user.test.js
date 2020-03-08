@@ -122,7 +122,7 @@ describe('Users Endpoints', () => {
     expect(res.body.message).toBe('Invalid input')
   })
 
-  it.skip('updates a user', async () => {
+  it('updates a user', async () => {
     const resNewUser = await req.post('/users/createUsers').send(payload)
 
     const id = resNewUser.body.user._id
