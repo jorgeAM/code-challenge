@@ -102,6 +102,51 @@ describe('Users Endpoints', () => {
     await req.del(`/users/deleteUsersById/${id}`)
   })
 
+  it('fails to update a user if user does not exist', async () => {
+    const id = '5e630e0fc9dc812e7562343b'
+
+    const res = await req.put(`/users/updateUsersById/${id}`)
+
+    expect(res.status).toBe(404)
+
+    expect(res.body.message).toBe('User not found')
+  })
+
+  it('fails to update a user if userId is invalid', async () => {
+    const id = '1'
+
+    const res = await req.put(`/users/updateUsersById/${id}`)
+
+    expect(res.status).toBe(405)
+
+    expect(res.body.message).toBe('Invalid input')
+  })
+
+  it.skip('updates a user', async () => {
+    const resNewUser = await req.post('/users/createUsers').send(payload)
+
+    const id = resNewUser.body.user._id
+
+    const params = {
+      ...payload,
+      name: 'updated name'
+    }
+
+    const res = await req.put(`/users/updateUsersById/${id}`).send(params)
+
+    const expected = {
+      name: params.name,
+      email: payload.email,
+      birthDate: '1405-12-31T00:00:00.000Z'
+    }
+
+    expect(res.status).toBe(200)
+
+    expect(res.body.user).toMatchObject(expected)
+
+    await req.del(`/users/deleteUsersById/${id}`)
+  })
+
   it('fails to delete a user if user does not exist', async () => {
     const id = '5e630e0fc9dc812e7562343b'
 

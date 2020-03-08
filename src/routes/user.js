@@ -53,15 +53,15 @@ router.get('/getusersById/:userId', async (req, res) => {
 router.put('/updateUsersById/:userId', async (req, res) => {
   const { userId } = req.params
 
-  const user = await User.findById(userId)
-
-  if (!user) {
-    return res.status(404).json({ message: 'User not found' })
-  }
-
-  const userPayload = { ...req.body }
-
   try {
+    const user = await User.findById(userId)
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' })
+    }
+
+    const userPayload = { ...req.body }
+
     await user.update(userPayload, { new: true })
 
     res.status(201).json({ user })
