@@ -3,6 +3,10 @@ import { Address, User } from '../models'
 
 const router = express.Router()
 
+router.get('/test', async (req, res) => {
+  res.json({ message: 'pass!' })
+})
+
 router.get('/getusers', async (req, res) => {
   const users = await User.find().sort('name')
 
@@ -47,6 +51,26 @@ router.get('/getusersById/:userId', async (req, res) => {
     res.status(200).json({ user })
   } catch {
     res.status(404).json({ message: 'Invalid user id' })
+  }
+})
+
+router.put('/updateUsersById/:userId', async (req, res) => {
+  const { userId } = req.params
+
+  const user = await User.findById(userId)
+
+  if (!user) {
+    res.status(404).json({ message: 'User not found' })
+  }
+
+  const userPayload = { ...req.body }
+
+  try {
+    await user.update(userPayload, { new: true })
+
+    res.status(201).json({ user })
+  } catch {
+    res.status(405).json({ message: 'Invalid input' })
   }
 })
 
